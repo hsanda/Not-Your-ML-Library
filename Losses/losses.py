@@ -165,7 +165,27 @@ class Loss_Functions():
         
         return numerator / denominator
     
+    def binary_cross_entropy_loss(self, y_pred, y_true):
+        """
+        inputs:            
+            y_true: true labels
+            y_pred: predicted labels which is given to you by the model as the probability of y_pred occuring 
+        
+        returns:
+            b_log_loss: binary logarithmic loss
+            
+        short description:
+            null
+        
+        
+        description:
+            function in latex
+            bi \ log \ loss = -\frac{1}{N}\sum^N_{i=1} y_{i} \log \hat{y_{i}} + (1 - y_{i}) \log(1 - \hat{y_{i}})
+        """
+        return -1 * jnp.sum(y_pred * jnp.log(y_pred), axis=-1) + (1 - y_true) * jnp.sum(jnp.log(1 - y_pred), axis=-1)
+    
     def logarithmic_loss(self, y_true, y_pred):
+        # TODO 
         """
         inputs:            
             y_true: true labels
@@ -180,26 +200,6 @@ class Loss_Functions():
         description:
             function in latex
             log \ loss = \sum^N_{i=1} \sum^M_{j=1} y_{ij} \log \hat{y}_{ij}
-        """
-        
-        return jnp.sum(jnp.square(jnp.log(y_pred + 1) - jnp.log(y_true + 1)), axis=-1)
-    
-    def binary_logarithmic_loss(self, y_true, y_pred):
-        """
-        inputs:            
-            y_true: true labels
-            y_pred: predicted labels
-        
-        returns:
-            b_log_loss: binary logarithmic loss
-            
-        short description:
-            null
-        
-        
-        description:
-            function in latex
-            bi \ log \ loss = -\frac{1}{N}\sum^N_{i=1} y_{i} \log \hat{y_{i}} + (1 - y_{i}) \log(1 - \hat{y_{i}})
         """
         
         return jnp.sum(jnp.square(jnp.log(y_pred + 1) - jnp.log(y_true + 1)), axis=-1)
