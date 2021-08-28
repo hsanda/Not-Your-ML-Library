@@ -172,7 +172,7 @@ class Loss_Functions():
             y_pred: predicted labels which is given to you by the model as the probability of y_pred occuring 
         
         returns:
-            b_log_loss: binary logarithmic loss
+            b_cross_entropy: binary cross entropy loss
             
         short description:
             null
