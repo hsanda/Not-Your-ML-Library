@@ -184,27 +184,29 @@ class Loss_Functions():
         """
         return -1 * jnp.sum(y_pred * jnp.log(y_pred), axis=-1) + (1 - y_true) * jnp.sum(jnp.log(1 - y_pred), axis=-1)
     
-    def logarithmic_loss(self, y_true, y_pred):
-        # TODO 
+    def n_cross_entropy_loss(self, y_true, y_pred):
         """
         inputs:            
             y_true: true labels
             y_pred: predicted labels
         
         returns:
-            log_loss: logarithmic loss
+            n_cross_entropy: n categorical cross entropy loss
+            
+        notes:
+            y_pred is a tensor of probabilities of each class given by the model. A common example is this probability coming from Softmax. 
             
         short description:
             null
         
         description:
             function in latex
-            log \ loss = \sum^N_{i=1} \sum^M_{j=1} y_{ij} \log \hat{y}_{ij}
+            log \ loss = \sum^N_{i=1} y_{i} \log (p(\hat{y}_{i}))
         """
-        
-        return jnp.sum(jnp.square(jnp.log(y_pred + 1) - jnp.log(y_true + 1)), axis=-1)
+        return -1 * jnp.sum(y_true * jnp.log(y_pred), axis=-1)
     
-    def logarithmic_hyperbolic_loss(self, y_true, y_pred):
+    def logarithmic_hyperbolic_cosine_loss(self, y_true, y_pred):
+        # TODO 
         """
         inputs:            
         
@@ -220,25 +222,30 @@ class Loss_Functions():
             
         """
         
-        return jnp.sum(jnp.square(jnp.log(jnp.abs(y_pred + 1) + 1) - jnp.log(jnp.abs(y_true + 1) + 1)), axis=-1)
+        return jnp.sum(jnp.log(jnp.cosh(y_pred - y_true)), axis=-1)
     
-    def huber_loss(self, y_true, y_pred):
+    def huber_loss(self, y_true, y_pred, delta=1e-8):
         """
         inputs:            
-        
+            y_true: true labels
+            y_pred: predicted labels
+            delta: value you want the grads clipped to
         
         returns:
-            
+            huber_loss: huber loss
             
         short description:
-        
+            null
         
         description:
             function in latex
-            
+            TODO 
         """
         
-        return jnp.sum(jnp.square(jnp.sqrt(jnp.abs(y_pred - y_true)) - 1), axis=-1)
+        if jnp.abs(y_pred - y_true) < delta:
+            return 0.5 * jnp.square(y_pred - y_true)
+        else:
+            return delta * (jnp.abs(y_pred - y_true) - 0.5 * delta)
     
     def poisson_loss(self, y_true, y_pred):
         """
