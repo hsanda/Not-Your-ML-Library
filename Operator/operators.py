@@ -34,9 +34,3 @@ class Operators():
     
     def calculate_std_dev(self):
         pass
-    
-    def accuracy_score(self):
-        pass
-    
-    def confusion_matrix(self):
-        pass
