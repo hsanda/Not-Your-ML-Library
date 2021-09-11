@@ -32,9 +32,6 @@ class Operators():
         
         return (1 / (N - 1)) * jnp.sum((x1 - mu_x1) * (x2 - mu_x2))
     
-class Operators():
-    def __init__(self) -> None:
-        pass
     
     def covariance(self, x1, x2) -> jnp.ndarray:
         """
@@ -97,7 +94,7 @@ class Operators():
     def subtract(self):
         pass
     
-    def power(self):
+    def pow(self):
         pass
     
     def exponential(self):
@@ -128,7 +125,7 @@ class Operators():
         pass
     
     def mean(self):
-        pass
+        return jnp.sum
     
     def median(self):
         pass
