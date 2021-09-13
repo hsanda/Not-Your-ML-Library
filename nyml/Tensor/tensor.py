@@ -1,28 +1,52 @@
 import numpy as np
-from Tensor.tensor_dependency import Dependency
+from typing import List
+from nyml.Tensor.tensor_dependency import Tensor_Dependency
 
 class Tensor():
     
-    def __init__(self, data: np.ndarray, requires_grad: bool = False, depends_on = Dependency[]) -> None:
+    def __init__(self, data: np.ndarray, requires_grad: bool = False, depends_on: List[Tensor_Dependency] = None) -> None:
         """[summary]
         Constructor for the Tensor class.
 
         Args:
             data (np.ndarray): data of the numpy array
-            requires_grad (bool, optional): whether the tensor requires gradients. Defaults to False.
-            depends_on ([type], optional): shape of the tensor based off the shape of the numpy array. Defaults to None.
+            requires_grad (bool, optional): gradient of the tensor if requires_grad is true. Defaults to False.
+            depends_on (List[Tensor_Dependency], optional): a list of tensors that were used to create this tensor. Defaults to None.
         
         Constructor additional notes:    
         self.shape = data.shape # shape of the tensor based off the shape of the numpy array
         """
         self.data = data 
+        self.grad = None
         self.requires_grad = requires_grad 
-        self.depends_on = depends_on 
+        self.depends_on = depends_on or []
         self.shape = data.shape 
+        self._version = 0
+        
         
     def __repr__(self) -> str:
         return f"Tensor({self.data}, requires_grad = {self.requires_grad})"
     
+    def backward(self, grad: 'Tensor' = None) -> None:
+        """[summary]
+        Backpropagation of the tensor.
+
+        Args:
+        """
+        assert self.requires_grad, "Tensor does not require gradients"
+        if grad is None:
+            if self.shape == ():
+                grad = Tensor(1.0)
+            else:
+                #TODO: make this more resilient
+                raise RuntimeError("grad must be specified for non scalar tensor")
+        
+        self.grad.data = self.grad.data + grad.data
+        
+        for tensor_dependents in self.depends_on:
+            gradients = tensor_dependents.grad_fn(grad.data)
+            tensor_dependents.tensor.backward(Tensor(gradients))
+            
     def __add__(self):
         return add(self)
     
@@ -48,7 +72,7 @@ class Tensor():
         return divide(self)
     
     def __matmul__(self):
-        return mat_mul(self)
+        return matmul(self)
     
     def __rmatmul__(self):
         return mat_mul(self)
@@ -165,6 +189,7 @@ class Tensor():
     
     def __slice__(self):
         return slice(self)
+    
     
     
         

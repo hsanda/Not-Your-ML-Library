@@ -1,42 +1,44 @@
 import numpy as np
+from nyml.Tensor.tensor import Tensor
+from nyml.Tensor.tensor_dependency import Tensor_Dependency
+
+def 
 
 class Add():
     
-    def add(self):
-        pass
+    def forward(self, A: Tensor, B: Tensor) -> Tensor:
+        c_data = np.add(A.data, B.data)
+        requires_grad = A.requires_grad or B.requires_grad
+        depends_on = []
+        
+        if A.requires_grad:
+            grad_fn = self.forward(A)
+            depends_on.append(Tensor_Dependency(A, grad_fn))
+            
+        if B.requires_grad:
+            grad_fn = self.forward(B)
+            depends_on.append(Tensor_Dependency(B, grad_fn))
+        
+        return Tensor(c_data, requires_grad, depends_on)
     
-    def forward(self):
-        pass
-    
-    def backward(self):
-        pass
+    def backward(self, tensor: Tensor, grad: np.ndarray) -> np.ndarray:
+        # Sum out added dims
+        ndims_added = grad.ndim - tensor.data.ndim
+        for _ in range(ndims_added):
+            grad = grad.sum(axis=0)
+
+        # Sum across broadcasted (but non-added dims)
+        for i, dim in enumerate(tensor.shape):
+            if dim == 1:
+                grad = grad.sum(axis=i, keepdims=True)
+
+        return grad
+        
     
 class Subtract():
 
-    def subtract(self):
-        pass
-    
-    def forward(self):
-        pass
-    
-    def backward(self):
-        pass
-    
-class Multiplication():
-    
-    def multiplication(self):
-        pass
-    
-    def forward(self):
-        pass
-    
-    def backward(self):
-        pass
-    
-class Divide():
-    
-    def divide(self):
-        pass
+    def subtract(self, A: Tensor, B: Tensor):
+        return A - B
     
     def forward(self):
         pass
@@ -46,8 +48,41 @@ class Divide():
     
 class Matrix_Multiplication():
     
-    def mat_mul(self):
+    def matmul(self, A: Tensor, B: Tensor):
+        return A @ B
+    
+    def forward(self):
         pass
+    
+    def backward(self):
+        pass
+    
+class Element_Wise_Matrix_Multiplication():
+    
+    def multiplication(self, A: Tensor, B: Tensor):
+        return A * B
+    
+    def forward(self):
+        pass
+    
+    def backward(self):
+        pass
+    
+class Inner_Product_Matrix_Multiplication():
+    
+    def multiplication(self, A: Tensor, B: Tensor):
+        return np.inner(A, B)
+    
+    def forward(self):
+        pass
+    
+    def backward(self):
+        pass
+    
+class Divide():
+    
+    def divide(self, A: Tensor, B: Tensor):
+        return A / B
     
     def forward(self):
         pass
@@ -57,8 +92,8 @@ class Matrix_Multiplication():
     
 class Sum():
     
-    def sum(self):
-        pass
+    def sum(self, A: Tensor) -> Tensor:
+        return np.sum(A)
     
     def forward(self):
         pass
@@ -68,19 +103,19 @@ class Sum():
     
 class Power():
     
-    def pow(self):
-        pass
+    def pow(self, tensor: Tensor, n: int) -> Tensor:
+        return np.pow(tensor, n)
     
     def forward(self):
         pass
     
     def backward(self):
-        pass
+        return (1/(n-1)) * np.pow(self.tensor_a, n-1)
     
 class Exponential():
     
-    def exp(self):
-        pass
+    def exp(self, A: Tensor) -> Tensor:
+        return np.exp(A)
     
     def forward(self):
         pass
@@ -90,8 +125,8 @@ class Exponential():
     
 class Square_Root():
     
-    def sqrt(self):
-        pass
+    def sqrt(self, A: Tensor) -> Tensor:
+        return np.sqrt(A)
     
     def forward(self):
         pass
@@ -101,8 +136,8 @@ class Square_Root():
     
 class Absolute_Value():
     
-    def abs(self):
-        pass
+    def abs(self, A: Tensor) -> Tensor:
+        return np.abs(A)
     
     def forward(self):
         pass
@@ -110,10 +145,10 @@ class Absolute_Value():
     def backward(self):
         pass
     
-class Logirithm():
+class Logarithm():
     
-    def log(self):
-        pass
+    def log(self, A: Tensor) -> Tensor:
+        return np.log(A)
     
     def forward(self):
         pass
@@ -123,8 +158,8 @@ class Logirithm():
     
 class Max():
     
-    def max(self):
-        pass
+    def max(self, A: Tensor, B: Tensor) -> Tensor:
+        return np.maximum(A, B)
     
     def forward(self):
         pass
@@ -134,8 +169,8 @@ class Max():
     
 class Min():
     
-    def min(self):
-        pass
+    def min(self, A: Tensor, B: Tensor) -> Tensor:
+        return np.minimum(A, B)
     
     def forward(self):
         pass
@@ -145,8 +180,8 @@ class Min():
     
 class Sine():
     
-    def sin(self):
-        pass
+    def sin(self, A: Tensor) -> Tensor:
+        return np.sin(A)
     
     def forward(self):
         pass
@@ -156,8 +191,8 @@ class Sine():
     
 class Cosine():
     
-    def cos(self):
-        pass
+    def cos(self, A: Tensor) -> Tensor:
+        return np.cos(A)
     
     def forward(self):
         pass
@@ -167,8 +202,8 @@ class Cosine():
     
 class Tangent():
     
-    def tan(self):
-        pass
+    def tan(self, A: Tensor) -> Tensor:
+        return np.tan(A)
     
     def forward(self):
         pass
@@ -178,8 +213,8 @@ class Tangent():
     
 class Hyperbolic_Sine():
     
-    def sinh(self):
-        pass
+    def sinh(self, A: Tensor) -> Tensor:
+        return np.sinh(A)
     
     def forward(self):
         pass
@@ -189,8 +224,8 @@ class Hyperbolic_Sine():
     
 class Hyperbolic_Cosine():
     
-    def cosh(self):
-        pass
+    def cosh(self, A: Tensor) -> Tensor:
+        return np.cosh(A)
     
     def forward(self):
         pass
@@ -200,8 +235,8 @@ class Hyperbolic_Cosine():
     
 class Hyperbolic_Tangent(): 
     
-    def tanh(self):
-        pass
+    def tanh(self, A: Tensor) -> Tensor:
+        return np.tanh(A)
     
     def forward(self):
         pass
@@ -211,8 +246,8 @@ class Hyperbolic_Tangent():
     
 class Mean():
     
-    def mean(self):
-        return jnp.sum
+    def mean(self, A: Tensor) -> Tensor:
+        return np.mean(A)
     
     def forward(self):
         pass
@@ -222,8 +257,8 @@ class Mean():
     
 class Median():
     
-    def median(self):
-        pass
+    def median(self, A: Tensor) -> Tensor:
+        return np.median(A)
     
     def forward(self):
         pass
@@ -233,8 +268,8 @@ class Median():
     
 class Mode():
     
-    def mode(self):
-        pass
+    def mode(self, A: Tensor) -> Tensor:
+        return np.bincount(A).argmax()
     
     def forward(self):
         pass
@@ -246,38 +281,13 @@ class Covariance():
     def __init__(self) -> None:
         pass
     
-    def cov(self, x1, x2) -> np.ndarray:
-        """
-        inputs:
-            x1: np.ndarray - vector that you wish to calculate the covariance of. shape: (n, d)
-            x2: np.ndarray - vector that you wish to calculate the covariance relative to. shape: (n, d)
-        
-        returns:
-            jnp.ndarray - covariance of x1 and x2
-            
-        short description:
-            mu_x1: float - mean of x1
-            mu_x2: float - mean of x2
-            x1_i: float - components within vector x1
-            x2_i: float - components within vector x2
-            
-            The covariance is determining the level to which two variables are correlated.
-        
-        description:
-        function in latex
-        \text{Cov}(x_{1},x_{2}) = {1 \over N-1}\sum_{i=1}^N (x_{1_{i}}-\mu_{x_{1}})(x_{{2}_i}-\mu_{x_{2}})
-        
-        """
-        N = x1.shape[0]
-        mu_x1 = np.mean(x1)
-        mu_x2 = np.mean(x2)
-        
-        return (1 / (N - 1)) * np.sum((x1 - mu_x1) * (x2 - mu_x2))
+    def cov(self, A: Tensor, B: Tensor) -> Tensor:
+        return np.cov(A, B) 
     
 class Standard_Deviation():
     
-    def std_dev(self):
-        pass
+    def std_dev(self, A: Tensor) -> Tensor:
+        return np.std(A)
     
     def forward(self):
         pass
@@ -287,7 +297,11 @@ class Standard_Deviation():
     
 class Maxpool():
     
-    def maxpool(self):
+    def maxpool(self, A: Tensor, kernel_size: tuple) -> Tensor:
+        stride = np.max(A)
+        #TODO: Implement Maxpool
+        # refer to 
+        # https://wiseodd.github.io/techblog/2016/07/18/convnet-maxpool-layer/
         pass
     
     def forward(self):
