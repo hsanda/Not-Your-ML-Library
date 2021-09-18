@@ -4,7 +4,7 @@ from nyml.Tensor.tensor_dependency import Tensor_Dependency
 
 class Tensor():
     
-    def __init__(self, data: np.ndarray, requires_grad: bool = False, depends_on: List[Tensor_Dependency] = None) -> None:
+    def __init__(self, data: np.ndarray, requires_grad: bool = False, is_leaf = True, depends_on: List[Tensor_Dependency] = None) -> None:
         """[summary]
         Constructor for the Tensor class.
 
@@ -12,20 +12,24 @@ class Tensor():
             data (np.ndarray): data of the numpy array
             requires_grad (bool, optional): gradient of the tensor if requires_grad is true. Defaults to False.
             depends_on (List[Tensor_Dependency], optional): a list of tensors that were used to create this tensor. Defaults to None.
+            is_leaf (bool, optional): if the tensor is a leaf or not. Defaults to True.
         
         Constructor additional notes:    
         self.shape = data.shape # shape of the tensor based off the shape of the numpy array
+        self.grad = None # gradient of the tensor
+        
         """
         self.data = data 
         self.grad = None
         self.requires_grad = requires_grad 
         self.depends_on = depends_on or []
+        self.is_leaf = is_leaf
         self.shape = data.shape 
-        self._version = 0
+        self._version = None
         
         
     def __repr__(self) -> str:
-        return f"Tensor({self.data}, requires_grad = {self.requires_grad})"
+        return f"Tensor({self.data}, requires_grad = {self.requires_grad}, is_leaf = {self.is_leaf})"
     
     def backward(self, grad: 'Tensor' = None) -> None:
         """[summary]
@@ -33,19 +37,7 @@ class Tensor():
 
         Args:
         """
-        assert self.requires_grad, "Tensor does not require gradients"
-        if grad is None:
-            if self.shape == ():
-                grad = Tensor(1.0)
-            else:
-                #TODO: make this more resilient
-                raise RuntimeError("grad must be specified for non scalar tensor")
-        
-        self.grad.data = self.grad.data + grad.data
-        
-        for tensor_dependents in self.depends_on:
-            gradients = tensor_dependents.grad_fn(grad.data)
-            tensor_dependents.tensor.backward(Tensor(gradients))
+        pass
             
     def __add__(self):
         return add(self)

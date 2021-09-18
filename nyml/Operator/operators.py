@@ -1,41 +1,31 @@
 import numpy as np
 from nyml.Tensor.tensor import Tensor
 from nyml.Tensor.tensor_dependency import Tensor_Dependency
+from nyml.Operator.Function import Function
 
-def 
-
-class Add():
+class Add(Function):
     
-    def forward(self, A: Tensor, B: Tensor) -> Tensor:
+    def forward(A: Tensor, B: Tensor) -> Tensor:
         c_data = np.add(A.data, B.data)
         requires_grad = A.requires_grad or B.requires_grad
         depends_on = []
         
         if A.requires_grad:
-            grad_fn = self.forward(A)
+            grad_fn = backward(A)
             depends_on.append(Tensor_Dependency(A, grad_fn))
             
         if B.requires_grad:
             grad_fn = self.forward(B)
             depends_on.append(Tensor_Dependency(B, grad_fn))
         
-        return Tensor(c_data, requires_grad, depends_on)
+        return Tensor(c_data, requires_grad, depends_on, is_leaf=False)
     
     def backward(self, tensor: Tensor, grad: np.ndarray) -> np.ndarray:
-        # Sum out added dims
-        ndims_added = grad.ndim - tensor.data.ndim
-        for _ in range(ndims_added):
-            grad = grad.sum(axis=0)
-
-        # Sum across broadcasted (but non-added dims)
-        for i, dim in enumerate(tensor.shape):
-            if dim == 1:
-                grad = grad.sum(axis=i, keepdims=True)
-
+        
         return grad
         
     
-class Subtract():
+class Subtract(Function):
 
     def subtract(self, A: Tensor, B: Tensor):
         return A - B
@@ -46,7 +36,7 @@ class Subtract():
     def backward(self):
         pass
     
-class Matrix_Multiplication():
+class Matrix_Multiplication(Function):
     
     def matmul(self, A: Tensor, B: Tensor):
         return A @ B
@@ -57,7 +47,7 @@ class Matrix_Multiplication():
     def backward(self):
         pass
     
-class Element_Wise_Matrix_Multiplication():
+class Element_Wise_Matrix_Multiplication(Function):
     
     def multiplication(self, A: Tensor, B: Tensor):
         return A * B
@@ -68,7 +58,7 @@ class Element_Wise_Matrix_Multiplication():
     def backward(self):
         pass
     
-class Inner_Product_Matrix_Multiplication():
+class Inner_Product_Matrix_Multiplication(Function):
     
     def multiplication(self, A: Tensor, B: Tensor):
         return np.inner(A, B)
@@ -79,7 +69,7 @@ class Inner_Product_Matrix_Multiplication():
     def backward(self):
         pass
     
-class Divide():
+class Divide(Function):
     
     def divide(self, A: Tensor, B: Tensor):
         return A / B
@@ -90,7 +80,7 @@ class Divide():
     def backward(self):
         pass
     
-class Sum():
+class Sum(Function):
     
     def sum(self, A: Tensor) -> Tensor:
         return np.sum(A)
@@ -101,7 +91,7 @@ class Sum():
     def backward(self):
         pass
     
-class Power():
+class Power(Function):
     
     def pow(self, tensor: Tensor, n: int) -> Tensor:
         return np.pow(tensor, n)
@@ -112,7 +102,7 @@ class Power():
     def backward(self):
         return (1/(n-1)) * np.pow(self.tensor_a, n-1)
     
-class Exponential():
+class Exponential(Function):
     
     def exp(self, A: Tensor) -> Tensor:
         return np.exp(A)
@@ -123,7 +113,7 @@ class Exponential():
     def backward(self):
         pass
     
-class Square_Root():
+class Square_Root(Function):
     
     def sqrt(self, A: Tensor) -> Tensor:
         return np.sqrt(A)
@@ -134,7 +124,7 @@ class Square_Root():
     def backward(self):
         pass
     
-class Absolute_Value():
+class Absolute_Value(Function):
     
     def abs(self, A: Tensor) -> Tensor:
         return np.abs(A)
@@ -145,7 +135,7 @@ class Absolute_Value():
     def backward(self):
         pass
     
-class Logarithm():
+class Logarithm(Function):
     
     def log(self, A: Tensor) -> Tensor:
         return np.log(A)
@@ -156,7 +146,7 @@ class Logarithm():
     def backward(self):
         pass
     
-class Max():
+class Max(Function):
     
     def max(self, A: Tensor, B: Tensor) -> Tensor:
         return np.maximum(A, B)
@@ -167,7 +157,7 @@ class Max():
     def backward(self):
         pass
     
-class Min():
+class Min(Function):
     
     def min(self, A: Tensor, B: Tensor) -> Tensor:
         return np.minimum(A, B)
@@ -178,7 +168,7 @@ class Min():
     def backward(self):
         pass
     
-class Sine():
+class Sine(Function):
     
     def sin(self, A: Tensor) -> Tensor:
         return np.sin(A)
@@ -189,7 +179,7 @@ class Sine():
     def backward(self):
         pass
     
-class Cosine():
+class Cosine(Function):
     
     def cos(self, A: Tensor) -> Tensor:
         return np.cos(A)
@@ -200,7 +190,7 @@ class Cosine():
     def backward(self):
         pass
     
-class Tangent():
+class Tangent(Function):
     
     def tan(self, A: Tensor) -> Tensor:
         return np.tan(A)
@@ -211,7 +201,7 @@ class Tangent():
     def backward(self):
         pass
     
-class Hyperbolic_Sine():
+class Hyperbolic_Sine(Function):
     
     def sinh(self, A: Tensor) -> Tensor:
         return np.sinh(A)
@@ -222,7 +212,7 @@ class Hyperbolic_Sine():
     def backward(self):
         pass
     
-class Hyperbolic_Cosine():
+class Hyperbolic_Cosine(Function):
     
     def cosh(self, A: Tensor) -> Tensor:
         return np.cosh(A)
@@ -233,7 +223,7 @@ class Hyperbolic_Cosine():
     def backward(self):
         pass
     
-class Hyperbolic_Tangent(): 
+class Hyperbolic_Tangent(Function): 
     
     def tanh(self, A: Tensor) -> Tensor:
         return np.tanh(A)
@@ -244,7 +234,7 @@ class Hyperbolic_Tangent():
     def backward(self):
         pass
     
-class Mean():
+class Mean(Function):
     
     def mean(self, A: Tensor) -> Tensor:
         return np.mean(A)
@@ -255,7 +245,7 @@ class Mean():
     def backward(self):
         pass
     
-class Median():
+class Median(Function):
     
     def median(self, A: Tensor) -> Tensor:
         return np.median(A)
@@ -266,7 +256,7 @@ class Median():
     def backward(self):
         pass
     
-class Mode():
+class Mode(Function):
     
     def mode(self, A: Tensor) -> Tensor:
         return np.bincount(A).argmax()
@@ -277,14 +267,14 @@ class Mode():
     def backward(self):
         pass
     
-class Covariance():
+class Covariance(Function):
     def __init__(self) -> None:
         pass
     
     def cov(self, A: Tensor, B: Tensor) -> Tensor:
         return np.cov(A, B) 
     
-class Standard_Deviation():
+class Standard_Deviation(Function):
     
     def std_dev(self, A: Tensor) -> Tensor:
         return np.std(A)
@@ -295,7 +285,7 @@ class Standard_Deviation():
     def backward(self):
         pass
     
-class Maxpool():
+class Maxpool(Function):
     
     def maxpool(self, A: Tensor, kernel_size: tuple) -> Tensor:
         stride = np.max(A)
@@ -310,7 +300,7 @@ class Maxpool():
     def backward(self):
         pass
     
-class Cross_Correlation():
+class Cross_Correlation(Function):
     
     def cross_correlation(self):
         pass
@@ -321,7 +311,7 @@ class Cross_Correlation():
     def backward(self):
         pass
     
-class Concatenate():
+class Concatenate(Function):
     
     def concatenate(self):
         pass
@@ -332,7 +322,7 @@ class Concatenate():
     def backward(self):
         pass
     
-class Expand_Dimensions():
+class Expand_Dimensions(Function):
     
     def expand_dims(self):
         pass
@@ -343,7 +333,7 @@ class Expand_Dimensions():
     def backward(self):
         pass
     
-class Slice():
+class Slice(Function):
     
     def slice(self):
         pass
