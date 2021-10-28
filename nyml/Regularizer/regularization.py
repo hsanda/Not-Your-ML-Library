@@ -1,4 +1,4 @@
-import jax.numpy as jnp
+import numpy as np
 
 class Regularization():
     def __init__(self):
@@ -7,7 +7,7 @@ class Regularization():
     def l1_norm(self, x):
         """
         inputs:          
-            x -> jnp.array:
+            x -> np.array:
         
         returns:
             
@@ -19,12 +19,12 @@ class Regularization():
             function in latex
             
         """
-        return jnp.sum(jnp.abs(x))
+        return np.sum(np.abs(x))
     
     def l2_norm(self, x):
         """
         inputs:          
-            x -> jnp.array:
+            x -> np.array:
         
         returns:
             
@@ -36,12 +36,12 @@ class Regularization():
             function in latex
             
         """
-        return jnp.sqrt(jnp.sum(jnp.square(x)))
+        return np.sqrt(np.sum(np.square(x)))
     
     def p_norm(self, x, p):
         """
         inputs:          
-            x -> jnp.array:
+            x -> np.array:
             p -> float:
         
         returns:
@@ -54,12 +54,12 @@ class Regularization():
             function in latex
             
         """
-        return jnp.sum(jnp.power(jnp.abs(x), p))
+        return np.sum(np.power(np.abs(x), p))
     
     def l1_regularizer(self, x, lambda_):
         """
         inputs:            
-            x -> jnp.array: 
+            x -> np.array: 
         
         returns:
             
@@ -76,7 +76,7 @@ class Regularization():
     def l2_regularizer(self, x, lambda_):
         """
         inputs:            
-            x -> jnp.array: 
+            x -> np.array: 
             lambda_ -> float:
             
         returns:
@@ -94,7 +94,7 @@ class Regularization():
     def lp_regularizer(self, x, lambda_):
         """
         inputs:          
-            x -> jnp.array:  
+            x -> np.array:  
             lambda_ -> float:
         
         returns:
@@ -107,4 +107,4 @@ class Regularization():
             function in latex
             \sum_{i=1}^{N} \left | x_{i} \right |^p
         """
-        return lambda_ * jnp.power(self.p_norm(), 1/p)
+        return lambda_ * np.power(self.p_norm(), 1/p)

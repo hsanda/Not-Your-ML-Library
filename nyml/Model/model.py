@@ -9,5 +9,8 @@ class Model():
     def logistic_regression():
         pass
     
+    def softmax_regression(self, x, y):
+        pass
+    
     def principal_component_analysis(self, x):
         pass
