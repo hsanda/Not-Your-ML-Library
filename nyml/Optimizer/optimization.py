@@ -34,8 +34,27 @@ class optimization():
                 - Truncated Newton
                 - Fletcher-Reeves
     """ 
-    def gradient_descent(self):
+    def gradient_descent(self, y_pred, y_true, lr, epochs, loss_function):
+        
+        for i in range(epochs):
+            
+    
+    def stochastic_gradient_descent(self):
         pass
+    
+    def batch_gradient_descent(self):
+        pass
+    
+    def mini_batch_gradient_descent(self):
+        pass
+    
+    def adagrad(self):
+        pass
+    
+    def nesterov_gradient_acceleration(self):
+        pass
+    
+    
     
     
     
