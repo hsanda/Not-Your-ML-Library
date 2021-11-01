@@ -97,6 +97,81 @@ class optimization():
         return params
     
     """
+    By taking the gradient of all the points within a (batch) portion within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
+
+    Args:
+        params (dict): contains the parameters of the model
+        lr (float): learning rate
+        size_of_batch (int): size of the batch
+        epochs (int): number of epochs
+        loss_fun (Callable): loss function to be optimized
+        data (np.ndarray): data to be used for the optimization
+        
+        var (<insert type>): description of var
+
+    Returns:
+        <dict>: The optimized parameters
+    """ 
+    def mini_batch_gradient_descent(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+        for i in range(epochs):
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                for param in params:
+                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                
+        return params
+    
+    # ----------------------------------------------------------------------------------------------------------------------  
+    """
+    By taking the gradient of all the points within a (batch) portion within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
+
+    Args:
+        params (dict): contains the parameters of the model
+        lr (float): learning rate
+        size_of_batch (int): size of the batch
+        epochs (int): number of epochs
+        loss_fun (Callable): loss function to be optimized
+        data (np.ndarray): data to be used for the optimization
+        
+        var (<insert type>): description of var
+
+    Returns:
+        <dict>: The optimized parameters
+    """ 
+    def momentum(self, params:dict, lr:float, past_lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+        #TODO: test momentum
+        v_k = 0
+        for i in range(epochs):
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                for param in params:
+                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (past_lr * v_k))
+                    vk_1 = (-1 * (lr * d_param[param])) + (past_lr * vk_1) # (past_lr * vk_1) is the momentum
+                    v_k = vk_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
+                
+        return params
+    
+    def nesterov_gradient_acceleration(self, params:dict, lr:float, past_lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+        v_k = 0
+        for i in range(epochs):
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                for param in params:
+                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (past_lr * v_k))
+                    vk_1 = (-1 * (lr * d_param[param])) + (past_lr * vk_1) # (past_lr * vk_1) is the momentum
+                    v_k = vk_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
+                
+        return params
+    
+    def adagrad(self):
+        #TODO: implement adagrad
+        pass
+    
+    # ----------------------------------------------------------------------------------------------------------------------
+    # --------------------------------------- Overloaded functions ---------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------------------
+    
+    """
     By taking the gradient (only one gradient) at the current point within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
 
     Args:
@@ -138,31 +213,6 @@ class optimization():
     Returns:
         <dict>: The optimized parameters
     """ 
-    def mini_batch_gradient_descent(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
-        for i in range(epochs):
-            for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
-                for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
-                
-        return params
-    
-    """
-    By taking the gradient of all the points within a (batch) portion within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
-
-    Args:
-        params (dict): contains the parameters of the model
-        lr (float): learning rate
-        size_of_batch (int): size of the batch
-        epochs (int): number of epochs
-        loss_fun (Callable): loss function to be optimized
-        data (np.ndarray): data to be used for the optimization
-        
-        var (<insert type>): description of var
-
-    Returns:
-        <dict>: The optimized parameters
-    """ 
     def mini_batch_SGD(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
@@ -172,40 +222,8 @@ class optimization():
                 
         return params
     
-    
-    # ----------------------------------------------------------------------------------------------------------------------  
-    """
-    By taking the gradient of all the points within a (batch) portion within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
-
-    Args:
-        params (dict): contains the parameters of the model
-        lr (float): learning rate
-        size_of_batch (int): size of the batch
-        epochs (int): number of epochs
-        loss_fun (Callable): loss function to be optimized
-        data (np.ndarray): data to be used for the optimization
-        
-        var (<insert type>): description of var
-
-    Returns:
-        <dict>: The optimized parameters
-    """ 
-    def momentum(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
-        #TODO: implement momentum
-        for i in range(epochs):
-            for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
-                for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
-                
-        return params
-    
-    def adagrad(self):
-        #TODO: implement adagrad
-        pass
-    
-    def nesterov_gradient_acceleration(self):
-        #TODO: implement nesterov gradient acceleration
+    def NAG(self, params:dict, lr:float, past_lr:float, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+        #TODO: implement NAG
         pass
     
     
