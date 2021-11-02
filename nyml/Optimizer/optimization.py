@@ -231,8 +231,21 @@ class optimization():
         return params
     
     def NAG(self, params:dict, lr:float, past_lr:float, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
-        #TODO: implement NAG
-        pass
+        v_k = 0
+        d_param = {}
+        for i in range(epochs):
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                params_copy = params.copy()
+                for param in params_copy:
+                    params_copy[param] = params_copy[param] - (gamma * v_k)
+
+                d_param = self.eval_grads(loss_fun, params_copy, random_mini_batch)
+                for param in params:
+                    vk_1 = (lr * d_param[param]) + (gamma * v_k) # (gamma * v_k) is the momentum
+                    params[param] = params[param] + vk_1 # e.g. w = w - ((lr * d_w) + (gamma * vk_1))
+                    v_k = vk_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
+                
+        return params
     
     
     
