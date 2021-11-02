@@ -230,7 +230,7 @@ class optimization():
                 
         return params
     
-    def NAG(self, params:dict, lr:float, past_lr:float, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+    def NAG(self, params:dict, lr:float, gamma:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         v_k = 0
         d_param = {}
         for i in range(epochs):
