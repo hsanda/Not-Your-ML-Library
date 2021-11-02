@@ -196,7 +196,8 @@ class optimization():
     """ 
     def SGD(self, params:dict, lr:float, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         size_of_batch = 1
-        
+        d_param = {}
+
         for i in range(epochs):
             for random_data_point in self.batch_iterator(data, size_of_batch):
                 d_param = self.eval_grads(loss_fun, params, random_data_point)
@@ -222,6 +223,7 @@ class optimization():
         <dict>: The optimized parameters
     """ 
     def mini_batch_SGD(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+        d_param = {}
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
                 d_param = self.eval_grads(loss_fun, params, random_mini_batch)
