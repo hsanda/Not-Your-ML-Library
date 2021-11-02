@@ -138,27 +138,26 @@ class optimization():
     Returns:
         <dict>: The optimized parameters
     """ 
-    def momentum(self, params:dict, lr:float, past_lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
-        #TODO: test momentum
+    def momentum(self, params:dict, lr:float, gamma:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         v_k = 0
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
                 d_param = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (past_lr * v_k))
-                    vk_1 = (-1 * (lr * d_param[param])) + (past_lr * vk_1) # (past_lr * vk_1) is the momentum
+                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (gamma * v_k))
+                    vk_1 = (-1 * (lr * d_param[param])) + (gamma * vk_1) # (gamma * vk_1) is the momentum
                     v_k = vk_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
                 
         return params
     
-    def nesterov_gradient_acceleration(self, params:dict, lr:float, past_lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
+    def nesterov_gradient_acceleration(self, params:dict, lr:float, gamma:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         v_k = 0
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
                 d_param = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (past_lr * v_k))
-                    vk_1 = (-1 * (lr * d_param[param])) + (past_lr * vk_1) # (past_lr * vk_1) is the momentum
+                    params[param] = params[param] + v_k # e.g. w = w + ((-1 * (lr * d_w)) + (gamma * v_k))
+                    vk_1 = (-1 * (lr * d_param[param])) + (gamma * vk_1) # (gamma * vk_1) is the momentum
                     v_k = vk_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
                 
         return params
