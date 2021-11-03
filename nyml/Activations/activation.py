@@ -112,8 +112,4 @@ class Activation():
     
     def abs(self, x):
         return np.abs(x)
-    
-    
-    
-    
-    
+        
