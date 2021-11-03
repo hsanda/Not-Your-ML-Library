@@ -15,7 +15,9 @@ class optimization():
     # ----------------------------------------------- First Order Algorithms -----------------------------------------------
     # ----------------------------------------------------------------------------------------------------------------------
     
-    
+    # --------------------------------------
+    # ------ Gradient Descent Methods ------
+    # --------------------------------------
     """
     By taking the gradients of all the points within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
 
@@ -97,7 +99,10 @@ class optimization():
                 
         return params
     
-    # ----------------------------------------------------------------------------------------------------------------------  
+    # -------------------------------------------
+    # ----- Additional First Order Methods ------
+    # ------------------------------------------- 
+    
     """
     By taking the gradient of all the points within a (batch) portion within the landscape, iteratively update parameters in order to minimize (descend) the loss function (within the loss function's landscape).  
 
@@ -258,16 +263,20 @@ class optimization():
     # ----------------------------------------------------------------------------------------------------------------------
     # ----------------------------------------------- Second Order Algorithms ----------------------------------------------
     # ----------------------------------------------------------------------------------------------------------------------
-
+    
+    # --------------------------------------
+    # ----------- Newton Methods -----------
+    # -------------------------------------- 
+    
     def newton_method(self):
         pass
 
     def secant_method(self):
         pass
-
-    # --------------------------------------------------------------------
-    # ------------------------ Quasi-Newton Methods ----------------------
-    # --------------------------------------------------------------------
+    
+    # --------------------------------------
+    # -------- Quasi-Newton Methods --------
+    # -------------------------------------- 
 
     def dfp(self): # davidson_fletcher_powell
         pass
@@ -431,7 +440,3 @@ class optimization():
                     params[param] = params[param] - eta_t * g_hat # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{\hat{v^{param}_{t}} + (\epsilon * I)}} * \hat{g_{t}}
                 
         return params
-    
-    
-    
-    
