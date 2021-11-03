@@ -2,41 +2,9 @@ from typing import Callable
 import numpy as np
 
 class optimization():
-    """
-    class that contains all optimization methods. These methods are the following:
-        First Order Algorithms:
-            - Gradient Descent
-                - Batch Gradient Descent
-                - Stochastic Gradient Descent 
-                - Mini-Batch Gradient Descent
-                - AdaGrad(Adaptive Gradient Descent)
-                    - AdaDelta
-                - Nesterov's Gradient acceleration
-            - Conjugate Gradient
-                - Conjugate Gradient
-                - Conjugate Gradient with Restarts
-            - Momentum
-            - RMS-Prop (Root Mean Square Propagation)
-            - Adam(Adaptive Moment Estimation)
-                - Adam 
-                - Adam with restarts
-        
-        Second Order Algorithms:
-            - Newton's Method
-            - Secant Method
-            - Quasi-Newton Method
-                - Davidson-Fletcher-Powell
-                - Broyden-Fletcher-Goldfarb-Shanno (BFGS)
-                - Limited-memory BFGS (L-BFGS)
-                - Newton-Raphson
-                - Levenberg-Marquardt
-                - Powell's method
-                - Steepest Descent
-                - Truncated Newton
-                - Fletcher-Reeves
-    """ 
-    
-    
+    def __init__(self) -> None:
+        pass
+
     def batch_iterator(self, data, size_of_batch):
             p = np.random.permutation(data.shape[0])
             data_rand = data[p]
