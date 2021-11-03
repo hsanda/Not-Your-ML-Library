@@ -291,6 +291,42 @@ class optimization():
     # ----------------------------------------------- Second Order Algorithms ----------------------------------------------
     # ----------------------------------------------------------------------------------------------------------------------
 
+    def newton_method(self):
+        pass
+
+    def secant_method(self):
+        pass
+
+    # --------------------------------------------------------------------
+    # ------------------------ Quasi-Newton Methods ----------------------
+    # --------------------------------------------------------------------
+
+    def dfp(self): # davidson_fletcher_powell
+        pass
+
+    def bfgs(self): # Broyden-Fletcher-Goldfarb-Shanno 
+        pass
+
+    def l_bfgs(self): # Limited-memory BFGS
+        pass
+
+    def newton_raphson(self):
+        pass
+
+    def levenberg_marquardt(self):
+        pass
+
+    def powell_method(self):
+        pass
+
+    def steepest_descent(self):
+        pass
+
+    def truncated_newton(self):
+        pass
+
+    def fletcher_reeves(self):
+        pass
 
     
     # ----------------------------------------------------------------------------------------------------------------------
