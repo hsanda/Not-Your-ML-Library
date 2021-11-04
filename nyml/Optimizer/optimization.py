@@ -38,10 +38,10 @@ class optimization():
 
         for i in range(epochs):
             for scrambled_dataset in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, scrambled_dataset)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, scrambled_dataset)
                 for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                    params[param] = params[param] - (lr * d_params[param]) # e.g. w = w - lr * d_w
                 
         return params
 
@@ -66,10 +66,10 @@ class optimization():
 
         for i in range(epochs):
             for random_data_point in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_data_point)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_data_point)
                 for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                    params[param] = params[param] - (lr * d_params[param]) # e.g. w = w - lr * d_w
                 
         return params
     
@@ -92,10 +92,10 @@ class optimization():
     def mini_batch_gradient_descent(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                    params[param] = params[param] - (lr * d_params[param]) # e.g. w = w - lr * d_w
                 
         return params
     
@@ -126,10 +126,10 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    v_t[param] = (lr * d_param[param]) + (gamma * v_t[param]) # (gamma * v_t) is the momentum
+                    v_t[param] = (lr * d_params[param]) + (gamma * v_t[param]) # (gamma * v_t) is the momentum
                     params[param] = params[param] - v_t[param] # e.g. w = w - ((lr * d_w) + (gamma * v_{t-1}))
                 
         return params
@@ -141,14 +141,14 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
+                d_params = {}
                 params_copy = params.copy()
                 for param in params_copy:
                     params_copy[param] = params_copy[param] - (gamma * v_t)
 
-                d_param = self.eval_grads(loss_fun, params_copy, random_mini_batch)
+                d_params = self.eval_grads(loss_fun, params_copy, random_mini_batch)
                 for param in params:
-                    v_t[param] = (lr * d_param[param]) + (gamma * v_t[param]) # (gamma * v_t) is the momentum
+                    v_t[param] = (lr * d_params[param]) + (gamma * v_t[param]) # (gamma * v_t) is the momentum
                     params[param] = params[param] + v_t[param] # e.g. w = w - ((lr * d_w) + (gamma * v_{t-1}))
                 
         return params
@@ -161,13 +161,13 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    g_t[param] = g_t[param] + np.pow(d_param[param], 2)
+                    g_t[param] = g_t[param] + np.pow(d_params[param], 2)
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = lr / np.sqrt(g_t[param] + epsilon)
-                    params[param] = params[param] - eta_t * d_param[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
+                    params[param] = params[param] - eta_t * d_params[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
                 
         return params
 
@@ -181,14 +181,14 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_param[param], 2))
-                    delta_param_t[param] = (gamma * delta_param_t[param]) + ((1 - gamma) * np.pow(d_param[param], 2))
+                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_params[param], 2))
+                    delta_param_t[param] = (gamma * delta_param_t[param]) + ((1 - gamma) * np.pow(d_params[param], 2))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = np.sqrt(delta_param_t[param] + epsilon) / np.sqrt(g_t[param] + epsilon)
-                    params[param] = params[param] - eta_t * d_param[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
+                    params[param] = params[param] - eta_t * d_params[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
                 
         return params
 
@@ -200,13 +200,13 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_param[param], 2))
+                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_params[param], 2))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = lr / np.sqrt(g_t[param] + epsilon)
-                    params[param] = params[param] - eta_t * d_param[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
+                    params[param] = params[param] - eta_t * d_params[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
                 
         return params
 
@@ -222,11 +222,11 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_param[param], 2))
-                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_param[param])
+                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_params[param], 2))
+                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_params[param])
                     g_hat = g_t[param] / (1 - (beta_g**(i+1)))
                     v_hat = v_t[param] / (1 - (beta_v**(i+1)))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
@@ -247,18 +247,18 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_param[param], 2))
-                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_param[param])
+                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_params[param], 2))
+                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_params[param])
                     g_hat = g_t[param] / (1 - (beta_g**(i+1)))
                     v_hat = v_t[param] / (1 - (beta_v**(i+1)))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = lr / np.sqrt(v_hat + epsilon)
                     params[param] = params[param] - (eta_t * g_hat) - (lr * wd * params[param]) # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{\hat{v^{param}_{t}} + (\epsilon * I)}} * \hat{g_{t}}
                 
-        return params
+        return params, loss_fun
 
     # ----------------------------------------------------------------------------------------------------------------------
     # ----------------------------------------------- Second Order Algorithms ----------------------------------------------
@@ -269,7 +269,14 @@ class optimization():
     # -------------------------------------- 
     
     def newton_method(self):
-        pass
+        for i in range(epochs):
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
+                sd_params = self.eval_grads(loss_fun, params, random_mini_batch) # second derivative, TODO: implement second derivative 
+                for param in params:
+                    params[param] = params[param] - (d_params[param] / sd_params[param])
+        
 
     def secant_method(self):
         pass
@@ -330,10 +337,10 @@ class optimization():
 
         for i in range(epochs):
             for random_data_point in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_data_point)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_data_point)
                 for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                    params[param] = params[param] - (lr * d_params[param]) # e.g. w = w - lr * d_w
                 
         return params
     
@@ -356,10 +363,10 @@ class optimization():
     def mini_batch_SGD(self, params:dict, lr:float, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray) -> dict:
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    params[param] = params[param] - (lr * d_param[param]) # e.g. w = w - lr * d_w
+                    params[param] = params[param] - (lr * d_params[param]) # e.g. w = w - lr * d_w
                 
         return params
     
@@ -367,14 +374,14 @@ class optimization():
         v_t = 0
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
+                d_params = {}
                 params_copy = params.copy()
                 for param in params_copy:
                     params_copy[param] = params_copy[param] - (gamma * v_t)
 
-                d_param = self.eval_grads(loss_fun, params_copy, random_mini_batch)
+                d_params = self.eval_grads(loss_fun, params_copy, random_mini_batch)
                 for param in params:
-                    vt_1 = (lr * d_param[param]) + (gamma * v_t) # (gamma * v_t) is the momentum
+                    vt_1 = (lr * d_params[param]) + (gamma * v_t) # (gamma * v_t) is the momentum
                     params[param] = params[param] + vt_1 # e.g. w = w - ((lr * d_w) + (gamma * vt_1))
                     v_t = vt_1 # everything before was done for readability of the math. This line is to update the momentum var but isnt true to form for the math.  
                 
@@ -388,13 +395,13 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    g_t[param] = g_t[param] + np.pow(d_param[param], 2)
+                    g_t[param] = g_t[param] + np.pow(d_params[param], 2)
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = lr / np.sqrt(g_t[param] + epsilon)
-                    params[param] = params[param] - eta_t * d_param[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
+                    params[param] = params[param] - eta_t * d_params[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
                 
         return params
 
@@ -406,13 +413,13 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_param[param], 2))
+                    g_t[param] = (gamma * g_t[param]) + ((1 - gamma) * np.pow(d_params[param], 2))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
                     eta_t = lr / np.sqrt(g_t[param] + epsilon)
-                    params[param] = params[param] - eta_t * d_param[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
+                    params[param] = params[param] - eta_t * d_params[param] # e.g. param_{t+1} = param_{t} - \frac{\eta}{\sqrt{v^{param}_{t} + (\epsilon * I)}} * \nabla_{param_{t}}
                 
         return params
     
@@ -428,11 +435,11 @@ class optimization():
 
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
-                d_param = {}
-                d_param = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
                 for param in params:
-                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_param[param], 2))
-                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_param[param])
+                    v_t[param] = (beta_v * v_t[param]) + ((1 - beta_v) * np.pow(d_params[param], 2))
+                    g_t[param] = (beta_g * v_t[param]) + ((1 - beta_g) * d_params[param])
                     g_hat = g_t[param] / (1 - (beta_g**(i+1)))
                     v_hat = v_t[param] / (1 - (beta_v**(i+1)))
                     epsilon = np.matmul(epsilon, np.eye(params[param].shape[0]))
