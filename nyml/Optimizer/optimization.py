@@ -295,8 +295,8 @@ class optimization():
                 for param in params:
                     sd_params[param] = (d_params[param] - pre_d_params[param]) / (params[param] - prev_params[param])
                     params[param] = params[param] - (d_params[param] * (1 / sd_params[param]))
-                    prev_params = params.copy()
-                    pre_d_params = d_params.copy()
+                prev_params = params.copy()
+                pre_d_params = d_params.copy()
 
         return params
 
