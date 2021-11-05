@@ -268,22 +268,37 @@ class optimization():
     # ----------- Newton Methods -----------
     # -------------------------------------- 
     
-    def newton_method(self):
+    def newton_method(self, params:dict, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray):
         for i in range(epochs):
             for random_mini_batch in self.batch_iterator(data, size_of_batch):
                 d_params = {}
-                d_params = self.eval_grads(loss_fun, params, random_mini_batch)
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch) # first derivative
                 sd_params = self.eval_grads(loss_fun, params, random_mini_batch) # second derivative, TODO: implement second derivative 
                 for param in params:
                     params[param] = params[param] - (d_params[param] / sd_params[param])
-        
-
-    def secant_method(self):
-        pass
-    
+                    
     # --------------------------------------
     # -------- Quasi-Newton Methods --------
     # -------------------------------------- 
+
+    def secant_method(self, params:dict, size_of_batch:int, epochs:int, loss_fun:Callable, data:np.ndarray):
+        for i in range(epochs):
+            prev_params = {}
+            pre_d_params = {}
+            for param in params:
+                prev_params[param] = 0 # initialize v_t
+                pre_d_params[param] = 0 # initialize g_t
+            for random_mini_batch in self.batch_iterator(data, size_of_batch):
+                d_params = {}
+                sd_params = {}
+                d_params = self.eval_grads(loss_fun, params, random_mini_batch) # first derivative 
+                for param in params:
+                    sd_params[param] = (d_params[param] - pre_d_params[param]) / (params[param] - prev_params[param])
+                    params[param] = params[param] - (d_params[param] * (1 / sd_params[param]))
+                    prev_params = params.copy()
+                    pre_d_params = d_params.copy()
+
+        return params
 
     def dfp(self): # davidson_fletcher_powell
         pass
