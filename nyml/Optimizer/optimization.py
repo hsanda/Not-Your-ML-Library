@@ -338,7 +338,7 @@ class optimization():
     Returns:
         <list>: The optimized parameters
     """
-    def fletcher_reeves(xk_params: np.ndarray, loss_function:Callable, d_loss_function:Callable, tolerance=10**-5, alpha_1=10**-4, alpha_2=.38):
+    def fletcher_reeves(self, xk_params: np.ndarray, loss_function:Callable, d_loss_function:Callable, tolerance=10**-5, alpha_1=10**-4, alpha_2=.38):
         gk = d_loss_function(xk_params)
         pk = -gk
         while True:
