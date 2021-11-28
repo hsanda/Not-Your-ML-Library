@@ -1,5 +1,8 @@
 from typing import Callable
 import numpy as np
+from scipy.optimize import line_search
+
+NORM = np.linalg.norm
 
 class optimization():
     def __init__(self) -> None:
